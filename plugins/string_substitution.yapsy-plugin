@@ -1,0 +1,9 @@
+[Core]
+Name = String Substitution Plugin
+Module = string_substitution
+
+[Documentation]
+Description = Performs sed-like (s/old/new) string substitutions on user text based on their history.
+Author = AnkhMorporkian
+Version = 0.1
+Website = rednit.com
