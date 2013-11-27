@@ -1,0 +1,6 @@
+yapsy
+twisted
+configobj
+arrow
+simplejson
+bitly_api
