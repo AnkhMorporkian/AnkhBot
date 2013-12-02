@@ -1,3 +1,7 @@
+import pprint
+
+from user_manager import permissions, OWNER
+
 from plugin import CommandPlugin
 
 
@@ -9,9 +13,17 @@ class AdminCommands(CommandPlugin):
 
     def activate(self):
         super(AdminCommands, self).activate()
-        print "got to admin commands activation"
-        self.commands = {"test": self.test}
+        print "activated admin commands XX"
+        self.commands = {"reload_plugins": self.reload_plugins, "list_timers": self.list_timers}
 
-    def test(self, user, channel, parameters):
-        print "Got to test"
-        self.bot.msg(channel, "test complete")
+    @permissions(OWNER)
+    def reload_plugins(self, user, channel, parameters):
+        print channel
+        self.bot.msg(user, "Reloading plugins.")
+        self.bot.plugin_manager.reload_plugins()
+
+    @permissions(OWNER)
+    def list_timers(self, user, channel, parameters):
+        print str(channel)
+        print len(channel)
+        self.bot.msg(user, pprint.pformat(self.bot.timers))

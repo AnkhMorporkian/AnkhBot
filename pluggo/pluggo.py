@@ -32,25 +32,39 @@ class Pluggo(object):
 
     def call(self, method, *args, **kwargs):
         for plugin in self.plugins:
-            instance_method = getattr(plugin['instance'], method, None)
-            if instance_method is not None:
-                instance_method(*args, **kwargs)
+            try:
+                instance_method = getattr(plugin['instance'], method, None)
+                if instance_method is not None:
+                    if method == "activate": print "Activating %s" % plugin['name']
+                    instance_method(*args, **kwargs)
+            except KeyError:
+                print "Key error in call function; plugin without an instance. %s" % str(plugin)
 
     def __init__(self):
         self.plugins = []
         self.directory = None
+        self.plugin_class = None
+        self.ignore_subclasses = None
+        self.attach = None
+        self.call_default = None
+        self.watch = None
 
-    def load_plugins(self, directory, plugin_class=PluggoPlugin, attach=None,
+    def load_plugins(self, directory, plugin_class=PluggoPlugin, ignore_subclasses=(), attach=None,
                      call_default=False, watch_for_changes=True):
         sys.path.append(directory)
         self.directory = directory
-        base_methods = set([method[0] for method in inspect.getmembers(plugin_class)])
+        self.plugin_class = plugin_class
+        self.ignore_subclasses = ignore_subclasses
+        self.attach = None
+        self.call_default = call_default
+        self.watch = watch_for_changes
+
         for plugin_candidate in glob.glob("%s/*.py" % directory.rstrip("/")):
             with open(plugin_candidate) as plugin_file:
                 name = ".".join(plugin_candidate.split(".")[:-1]).split('/')[-1]
                 module = imp.load_module(name, plugin_file, directory, (".py", "r", imp.PY_SOURCE))
                 for name, obj in inspect.getmembers(module):
-                    if obj is plugin_class:
+                    if obj is plugin_class or obj in ignore_subclasses:
                         continue
                     if inspect.isclass(obj):
                         if issubclass(obj, plugin_class):
@@ -68,7 +82,10 @@ class Pluggo(object):
                                 }
                                 if attach is not None:
                                     setattr(obj, *attach)
-                                self.plugins.append(plugin_information)
+                                if not any([o.__class__ is obj for o in self.plugins]):
+                                    self.plugins.append(plugin_information)
+                                else:
+                                    print "Didn't add, duplicate."
 
                             except TypeError:
                                 methods = set(
@@ -87,6 +104,20 @@ class Pluggo(object):
                         method = getattr(plugin['instance'], plugin['default_method'], None)
                         if method is not None:
                             method()
+
+    def reload_plugins(self, activate=True):
+        print "reload_plugins called"
+        self.call("deactivate")
+        for plugin in self.plugins:
+            try:
+                del plugin['instance']
+            except KeyError:
+                continue
+        del self.plugins
+        self.plugins = []
+        time.sleep(.1)
+        self.load_plugins(self.directory, self.plugin_class, self.ignore_subclasses, self.attach, False, self.watch)
+        if activate: self.call("activate")
 
     def watch_for_changes(self):
         event_handler = self.reload_file()

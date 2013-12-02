@@ -113,7 +113,6 @@ class CommandPlugin(AnkhBotPlugin):
 
         TODO: User verification via decorators.
         """
-        print self.bot.config["Plugin Settings"]["command_prefix"]
         if msg[0] == self.bot.config["Plugin Settings"]["command_prefix"]:
             tokenized_message = self.tokenize_message(msg)
             command = tokenized_message[0][1:]
