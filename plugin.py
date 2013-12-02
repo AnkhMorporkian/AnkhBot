@@ -1,25 +1,26 @@
-from yapsy.IPlugin import IPlugin
-from yapsy.PluginManager import PluginManagerSingleton
+from pluggo import PluggoPlugin
 
 
-class AnkhBotPlugin(IPlugin):
-    def __init__(self):
-        super(AnkhBotPlugin, self).__init__()
-        self.bot = PluginManagerSingleton.get().bot
-        self.plugin_name = None
-        self.config = {}
+class AnkhBotPlugin(PluggoPlugin):
+    name = "AnkhBot base plugin"
+    version = 0.1
+    priority = 100
+    description = "Base class for AnkhBot plugins to inherit from."
+
+    bot = None
 
     def activate(self):
         """
         Called when the module is activated. Generally you'll want to put code in here instead of __init__
         to avoid unexpected behavior. If you override activate, make sure to make a super call.
         """
-        self.plugin_name = self.bot.get_plugin_name(self)
-        if self.plugin_name in self.bot.config["Plugin Settings"]["Plugins"]:
-            self.config = self.bot.config["Plugin Settings"]["Plugins"][self.plugin_name]
+        self.config = {}
+        if self.name in self.bot.config["Plugin Settings"]["Plugins"]:
+            self.config = self.bot.config["Plugin Settings"]["Plugins"][self.name]
         else:
-            self.bot.config["Plugin Settings"]["Plugins"][self.plugin_name] = {}
-            self.config = self.bot.config["Plugin Settings"]["Plugins"][self.plugin_name]
+            self.bot.config["Plugin Settings"]["Plugins"][self.name] = {}
+            self.config = self.bot.config["Plugin Settings"]["Plugins"][self.name]
+
 
     def deactivate(self):
         """
@@ -95,8 +96,9 @@ class CommandPlugin(AnkhBotPlugin):
     """
     Plugin class to provide the ability to respond to user commands easily.
     """
-    def __init__(self):
-        super(CommandPlugin, self).__init__()
+
+    def activate(self):
+        super(CommandPlugin, self).activate()
         self.commands = {}
 
     def add_commands(self, command_dictionary):
@@ -111,6 +113,7 @@ class CommandPlugin(AnkhBotPlugin):
 
         TODO: User verification via decorators.
         """
+        print self.bot.config["Plugin Settings"]["command_prefix"]
         if msg[0] == self.bot.config["Plugin Settings"]["command_prefix"]:
             tokenized_message = self.tokenize_message(msg)
             command = tokenized_message[0][1:]

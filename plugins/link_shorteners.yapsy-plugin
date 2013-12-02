@@ -1,9 +1,0 @@
-[Core]
-Name = Link Shortener
-Module = link_shortener
-
-[Documentation]
-Description = Shortens links using the bit.ly API.
-Author = AnkhMorporkian
-Version = 0.1
-Website = rednit.com

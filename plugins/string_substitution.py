@@ -2,8 +2,10 @@ import re
 
 from plugin import AnkhBotPlugin
 
-
 class StringSubstitution(AnkhBotPlugin):
+    name = "String Substitution"
+    description = "Provides sed like string replacements in IRC."
+
     substitution_regex = re.compile(r's/(.+)/(.+)')
 
     def on_message(self, user, channel, msg):
