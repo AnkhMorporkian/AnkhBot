@@ -4,10 +4,11 @@ import urllib2
 import simplejson as json
 import arrow
 
-from plugin import AnkhBotPlugin
+from plugin import CommandPlugin
+from user_manager import permissions, ADMIN
 
 
-class SubmissionGrabber(AnkhBotPlugin):
+class SubmissionGrabber(CommandPlugin):
     """
     Implements a plugin that grabs new submissions from a specific reddit.com subreddit as specified intervals.
     If there are new submissions, it will pop them off in the order they were submitted.
@@ -24,8 +25,11 @@ class SubmissionGrabber(AnkhBotPlugin):
     def activate(self):
         super(SubmissionGrabber, self).activate()
         self.allowed_channels.extend(self.config['allowed_channels'])
-
-        self.bot.add_timer(seconds=int(self.config['fetch_time']), function=self.new_submissions, name=self.loop_name)
+        self.timer = self.bot.add_timer(seconds=int(self.config['fetch_time']), function=self.new_submissions,
+                                        name=self.loop_name)
+        self.commands = {
+            "queue_status": self.queue_status
+        }
 
     def new_submissions(self):
         self.grab_new_submissions()
@@ -81,4 +85,14 @@ class SubmissionGrabber(AnkhBotPlugin):
                 temporary_queue.append(result)
                 self.seen_submissions.add(result["id"])
             self.submission_deque.extend(reversed(temporary_queue))
+
+    @permissions(ADMIN)
+    def queue_status(self, user, channel, parameters):
+        self.bot.msg(channel, "Queue status: %d submissions in the queue, %d submissions seen." % (
+        len(self.submission_deque), len(self.seen_submissions)))
+
+    def deactivate(self):
+        print "Deactivate called."
+        self.timer.stop()
+        del self.timer
 

@@ -8,14 +8,12 @@ class PythonSandbox(CommandPlugin):
     description = "Provides a Python Sandbox for users to play around with. Implemented using PyPy."
 
     def activate(self):
-        print "Got to activate in PythonSandbox"
         super(PythonSandbox, self).activate()
         self.commands = {
             "py": self.pypy_sandbox
         }
 
     def pypy_sandbox(self, user, channel, parameters):
-        print "Got here"
         unsafe_code = ' '.join(parameters)
         filename = "sandboxed.py"
         with open('%s/sandboxed.py' % self.config['tmp_dir'], 'w') as f:

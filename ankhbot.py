@@ -6,7 +6,7 @@ from twisted.words.protocols import irc
 from twisted.internet import protocol
 from twisted.internet import reactor
 from pluggo import Pluggo
-from plugin import AnkhBotPlugin
+from plugin import AnkhBotPlugin, CommandPlugin
 
 
 def plugin_router(target_function_name):
@@ -46,7 +46,7 @@ class AnkhBot(irc.IRCClient):
         """
         AnkhBotPlugin.bot = self  # Attach the bot to the plugin class so it can be used by all the plugins for reference.
         self.plugin_manager = Pluggo()
-        self.plugin_manager.load_plugins("plugins", AnkhBotPlugin)
+        self.plugin_manager.load_plugins("plugins", AnkhBotPlugin, ignore_subclasses=(CommandPlugin,))
         pprint(self.plugin_manager.plugins)
         self.history = []
         self.timers = {}
@@ -64,6 +64,7 @@ class AnkhBot(irc.IRCClient):
         timer = LoopingCall(f=function)
         timer.start(interval=seconds)
         self.timers[name] = timer
+        return timer
 
     def stop_timer(self, name):
         if name in self.timers:

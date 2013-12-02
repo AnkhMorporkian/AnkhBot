@@ -18,9 +18,11 @@ class AutoIdentifier(AnkhBotPlugin):
     def on_notice(self, user, channel, msg):
         if self.waiting_for_ident and self.pretty_username(user).lower() == self.config["nickserv"].lower():
             print "Got NickServ message."
-            if "identified" in msg.lower():
+            if "identified" in msg.lower() or "logged" in msg.lower():
                 self.bot.identified = True
                 self.waiting_for_ident = False
                 print "Successfully identified"
             elif "invalid password" in msg.lower():
                 print "Did not successfully identify."
+            else:
+                print "Weird. %s" % msg.lower()
