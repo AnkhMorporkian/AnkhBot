@@ -43,7 +43,6 @@ build/
 *.vssscc
 .builds
 *.pidb
-*.log
 *.scc
 
 # Visual C++ cache files
@@ -214,3 +213,7 @@ pluginsc
 # Config file
 
 ankhbot.cfg
+/AnkhBot.sublime-project
+/AnkhBot.sublime-workspace
+/ankhbot.cfg
+/test.py
