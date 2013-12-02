@@ -5,8 +5,12 @@ from plugin import AnkhBotPlugin
 
 
 class LinkShortener(AnkhBotPlugin):
+    name = "Link Shortener"
+    description = "Shortens links automatically in channels."
+
     def activate(self):
         super(LinkShortener, self).activate()
+        print "Activated LinkShortener"
         self.bitly = bitly_api.Connection(self.config["username"].lower(), self.config["api_token"])
         self.url_regex = re.compile(r'((?:https?://)?(?:[\da-z\.-]+)\.(?:[a-z\.]{2,6})(?:[/\w \.-]*)*/?)')
 
@@ -15,7 +19,8 @@ class LinkShortener(AnkhBotPlugin):
         if urls is not None:
             shortened_urls = []
             for url in urls:
-                shortened_urls.append(self.bitly.shorten(url))
+                if len(url) > 30:
+                    shortened_urls.append(self.bitly.shorten(url))
             if len(shortened_urls) == 1:
                 self.bot.msg(channel,
                              "%s's link shortened: %s" % (self.pretty_username(user), str(shortened_urls[0]['url'])))

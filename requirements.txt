@@ -1,3 +1,4 @@
+duckduckgo
 yapsy
 twisted
 configobj

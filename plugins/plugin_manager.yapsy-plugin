@@ -1,9 +1,0 @@
-[Core]
-Name = Plugin Manager Plugin
-Module = plugin_manager
-
-[Documentation]
-Description = Allows live management of plugins.
-Author = AnkhMorporkian
-Version = 0.01
-Website = rednit.com

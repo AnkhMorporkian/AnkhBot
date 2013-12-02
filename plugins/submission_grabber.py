@@ -1,7 +1,9 @@
-import simplejson as json
 from collections import deque
 import urllib2
+
+import simplejson as json
 import arrow
+
 from plugin import AnkhBotPlugin
 
 
@@ -10,6 +12,7 @@ class SubmissionGrabber(AnkhBotPlugin):
     Implements a plugin that grabs new submissions from a specific reddit.com subreddit as specified intervals.
     If there are new submissions, it will pop them off in the order they were submitted.
     """
+    name = "Submission Grabber"
     loop_name = "submission_grabber"
 
     def __init__(self):
@@ -21,6 +24,7 @@ class SubmissionGrabber(AnkhBotPlugin):
     def activate(self):
         super(SubmissionGrabber, self).activate()
         self.allowed_channels.extend(self.config['allowed_channels'])
+
         self.bot.add_timer(seconds=int(self.config['fetch_time']), function=self.new_submissions, name=self.loop_name)
 
     def new_submissions(self):

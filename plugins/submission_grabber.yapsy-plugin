@@ -1,9 +1,0 @@
-[Core]
-Name = Submission Grabber
-Module = submission_grabber
-
-[Documentation]
-Description = Grabs new submissions from a subreddit and sends a message about that submission to predefined channels at predefined intervals.
-Author = AnkhMorporkian
-Version = 0.1
-Website = rednit.com
