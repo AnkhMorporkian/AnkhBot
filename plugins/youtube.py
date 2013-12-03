@@ -27,10 +27,10 @@ class YouTube(AnkhBotPlugin):
             return
 
         response="Title: {} :: Uploader: {} :: Duration: {} :: Views: {} :: Rating: {:.2f}"
-        self.bot.msg(channel,response.format(v_json['title'],v_json['uploader'],self.__time(v_json['duration']),
+        self.bot.msg(channel,response.format(v_json['title'],v_json['uploader'],self.format_yt_time(v_json['duration']),
                         v_json['viewCount'],v_json['rating']))
 
-    def __time(self,seconds):
+    def format_yt_time(self,seconds):
         m, s = divmod(seconds, 60)
         h, m = divmod(m, 60)
         return "%d:%02d:%02d" % (h, m, s)
