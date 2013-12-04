@@ -3,6 +3,7 @@ import requests
 
 from plugin import AnkhBotPlugin
 
+
 class xkcd(AnkhBotPlugin):
 
     name = "xkcd plugin"
@@ -17,14 +18,14 @@ class xkcd(AnkhBotPlugin):
         elif re.search(r"/xkcd.com/(\d+)", msg) is not None:
             comic_id = re.search(r"/xkcd.com/(\d+)", msg).group(1)
             comic = self.get_comic_info(comic_id)
+        elif msg.replace(".xkcd", "").strip().isdigit():
+            comic = self.get_comic_info(msg.replace(".xkcd", "").strip())
         else:
-            pass
-
-        print comic
+            return
 
         if comic is not None:
             self.bot.msg(channel, response.format(comic['title'],
-                                "http://xkcd.com/" + str(comic['num'])))
+                                                  "http://xkcd.com/" + str(comic['num'])))
 
     def get_comic_info(self, comic_id=None):
         url = "http://xkcd.com/{}info.0.json".format(
@@ -35,4 +36,3 @@ class xkcd(AnkhBotPlugin):
             return r.json()
         else:
             return None
-
