@@ -30,7 +30,7 @@ def plugin_router(target_function_name):
 
 class AnkhBot(irc.IRCClient):
     """
-    AnkhBot is a plugin-driven IRC bot. The plugins are mediated by yapsy.
+    AnkhBot is a plugin-driven IRC bot.
 
     TODO: Add support for every notification event. Currently only privmsg, join, and connect are tracked.
     """
@@ -99,10 +99,9 @@ class AnkhBotFactory(protocol.ClientFactory):
     """
     protocol = AnkhBot
 
-    def __init__(self):
-        self.config = ConfigObj("ankhbot.cfg")
-        self.channels = self.config["AnkhBot"]['channels']
-        self.nickname = self.config["AnkhBot"]["nickname"]
+    def __init__(self, config):
+        self.channels = config["AnkhBot"]['channels']
+        self.nickname = config["AnkhBot"]["nickname"]
 
     def clientConnectionLost(self, connector, reason):
         print "Lost connection (%s), reconnecting." % reason
@@ -114,5 +113,8 @@ class AnkhBotFactory(protocol.ClientFactory):
 
 
 if __name__ == "__main__":
-    reactor.connectTCP('irc.freenode.net', 6667, AnkhBotFactory())
+    config = ConfigObj("ankhbot.cfg")
+    server = config['AnkhBot']['server']
+    port = int(config['AnkhBot']['port'])
+    reactor.connectTCP(server, port, AnkhBotFactory(config))
     reactor.run()
