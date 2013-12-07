@@ -30,7 +30,6 @@ class xkcd(AnkhBotPlugin):
     def get_comic_info(self, comic_id=None):
         url = "http://xkcd.com/{}info.0.json".format(
             "" if comic_id is None else comic_id + "/")
-        print url
         r = requests.get(url)
         if r.status_code == 200:
             return r.json()
