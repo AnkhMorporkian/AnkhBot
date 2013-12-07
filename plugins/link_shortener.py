@@ -11,7 +11,7 @@ class LinkShortener(AnkhBotPlugin):
     def activate(self):
         super(LinkShortener, self).activate()
         print "Activated LinkShortener"
-        self.bitly = bitly_api.Connection(self.config["username"].lower(), self.config["api_token"])
+        self.bitly = bitly_api.Connection(self.config["bitly_username"].lower(), self.config["bitly_api_token"])
         self.url_regex = re.compile(r'((?:https?://)?(?:[\da-z\.-]+)\.(?:[a-z\.]{2,6})(?:[/\w \.-]*)*/?)')
 
     def on_message(self, user, channel, msg):
