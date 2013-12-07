@@ -100,8 +100,9 @@ class AnkhBotFactory(protocol.ClientFactory):
     protocol = AnkhBot
 
     def __init__(self, config):
-        self.channels = config["AnkhBot"]['channels']
-        self.nickname = config["AnkhBot"]["nickname"]
+        self.config=config
+        self.channels = self.config["AnkhBot"]['channels']
+        self.nickname = self.config["AnkhBot"]["nickname"]
 
     def clientConnectionLost(self, connector, reason):
         print "Lost connection (%s), reconnecting." % reason
